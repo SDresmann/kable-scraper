@@ -1,33 +1,18 @@
 const puppeteer = require('puppeteer');
 
-async function scrapeKableAcademyDates() {
-    const url = 'https://kableacademy.com/';
+export default async (req, res) => {
+    const browser = await puppeteer.launch({
+        headless: true,
+        args: ['--no-sandbox', '--disable-setuid-sandbox']
+    });
+    const page = await browser.newPage();
+    await page.goto('https://kableacademy.com/', { waitUntil: 'networkidle2' });
 
-    try {
-        const browser = await puppeteer.launch({
-            headless: true,
-            args: [
-                '--no-sandbox',
-                '--disable-setuid-sandbox',
-                '--disable-dev-shm-usage'
-            ]
-        });
+    const dates = await page.evaluate(() => {
+        return Array.from(document.querySelectorAll('.date-class')) // Adjust selector
+            .map(el => el.textContent.trim());
+    });
 
-        const page = await browser.newPage();
-        await page.goto(url, { waitUntil: 'networkidle2' });
-
-        // Replace '.date-class' with the actual selector for dates
-        const dates = await page.evaluate(() => {
-            return Array.from(document.querySelectorAll('.date-class')) // Update selector
-                .map(el => el.textContent.trim());
-        });
-
-        await browser.close();
-        return dates;
-    } catch (error) {
-        console.error('Error scraping the website:', error);
-        return [];
-    }
-}
-
-module.exports = scrapeKableAcademyDates;
+    await browser.close();
+    res.status(200).json(dates);
+};
