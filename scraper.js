@@ -1,6 +1,6 @@
 import { chromium } from 'playwright';
 
-export async function scrapeKableAcademyTestimonials() {
+export async function scrapeKableAcademyDates() {
     const url = 'https://kableacademy.com/';
 
     try {
