@@ -1,31 +1,12 @@
-import express from 'express';
-import { scrapeKableAcademyDates } from './scraper.js';
+import axios from 'axios';
 
-const app = express();
-const PORT = process.env.PORT || 10000;
-
-// Root route
-app.get('/', (req, res) => {
-    res.send('Welcome to the Kable Academy Scraper API. Use /api/dates to get the latest dates.');
-});
-
-// API route for dates
-app.get('/api/dates', async (req, res) => {
+app.get('/api/test-site', async (req, res) => {
     try {
-        const dates = await scrapeKableAcademyDates();
-
-        if (!dates || dates.length === 0) {
-            console.warn('No dates found, returning fallback response.');
-            return res.status(404).json({ error: 'No dates found.' });
-        }
-
-        res.json(dates);
+        const response = await axios.get('https://kableacademy.com/');
+        console.log('Site is accessible. HTML content:', response.data);
+        res.send('Site is accessible.');
     } catch (error) {
-        console.error('Error fetching dates:', error);
-        res.status(500).json({ error: 'Internal Server Error' });
+        console.error('Error accessing the site:', error);
+        res.status(500).send('Site is not accessible.');
     }
-});
-
-app.listen(PORT, () => {
-    console.log(`Server is running on http://localhost:${PORT}`);
 });
