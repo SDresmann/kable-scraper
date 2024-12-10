@@ -11,12 +11,13 @@ export async function scrapeKableAcademyDates() {
 
         const page = await browser.newPage();
         console.log('Navigating to the site...');
-        await page.goto(url, { waitUntil: 'load', timeout: 30000 });
+        await page.goto(url, { waitUntil: 'networkidle2', timeout: 30000 });
 
-        // Log the full HTML content of the page for debugging
+        // Log the entire HTML content of the page
         const content = await page.content();
-        console.log('Page content:', content);
+        console.log('Page content:', content); // This will include the raw HTML
 
+        // Wait for the dates to load dynamically
         console.log('Waiting for selector...');
         await page.waitForSelector('.elementor-testimonial__text', { timeout: 15000 });
 
@@ -30,8 +31,7 @@ export async function scrapeKableAcademyDates() {
         await browser.close();
 
         if (!dates || dates.length === 0) {
-            console.error('No dates were scraped. Possible selector or rendering issue.');
-            throw new Error('No dates found.');
+            throw new Error('No dates were scraped. Check if the selector is correct or if the content is dynamic.');
         }
 
         return dates;
