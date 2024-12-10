@@ -12,6 +12,20 @@ app.get('/', (req, res) => {
 // API route for dates
 import axios from 'axios';
 
+
+
+app.get('/api/dates', async (req, res) => {
+    try {
+        const dates = await scrapeKableAcademyDates();
+        if (!dates || dates.length === 0) {
+            return res.status(404).json({ error: 'No dates found.' });
+        }
+        res.json(dates);
+    } catch (error) {
+        console.error('Error fetching dates:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
 app.get('/api/test-site', async (req, res) => {
     try {
         const response = await axios.get('https://kableacademy.com/');
