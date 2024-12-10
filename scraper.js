@@ -5,7 +5,7 @@ export async function scrapeKableAcademyDates() {
 
     try {
         const browser = await chromium.launch({
-            headless: true,
+            headless: false, // Run in non-headless mode for debugging
             args: ['--no-sandbox', '--disable-setuid-sandbox']
         });
 
@@ -13,15 +13,14 @@ export async function scrapeKableAcademyDates() {
         console.log('Navigating to the site...');
         await page.goto(url, { waitUntil: 'networkidle2', timeout: 30000 });
 
-        // Log the entire HTML content of the page
+        // Log the entire HTML content of the page for debugging
         const content = await page.content();
-        console.log('Page content:', content); // This will include the raw HTML
+        console.log('Page content:', content); // Logs the full page HTML
 
-        // Wait for the dates to load dynamically
-        console.log('Waiting for selector...');
+        // Wait for the specific element (dates container)
         await page.waitForSelector('.elementor-testimonial__text', { timeout: 15000 });
 
-        console.log('Scraping data...');
+        // Extract the text content of matching elements
         const dates = await page.evaluate(() =>
             Array.from(document.querySelectorAll('.elementor-testimonial__text'))
                 .map(el => el.textContent.trim())
@@ -31,7 +30,7 @@ export async function scrapeKableAcademyDates() {
         await browser.close();
 
         if (!dates || dates.length === 0) {
-            throw new Error('No dates were scraped. Check if the selector is correct or if the content is dynamic.');
+            throw new Error('No dates found. Check if the selector is correct or if the content is dynamic.');
         }
 
         return dates;

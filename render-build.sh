@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 
-# Install system dependencies required for Playwright browsers
 apt-get update && apt-get install -y \
     libnss3 \
     libatk1.0-0 \
@@ -18,5 +17,4 @@ apt-get update && apt-get install -y \
     libgtk-3-0 \
     wget
 
-# Install Playwright browsers
 npx playwright install
