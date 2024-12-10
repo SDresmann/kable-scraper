@@ -13,24 +13,24 @@ export async function scrapeKableAcademyDates() {
         await page.goto(url, { waitUntil: 'load' });
 
         // Wait for Elementor content to load
-        await page.waitForSelector('.elementor-testimonial__text'); // Wait for the specific class
+        await page.waitForSelector('.elementor-testimonial__text');
 
-        // Scrape the testimonials
-        const testimonials = await page.evaluate(() => {
+        // Scrape the dates
+        const dates = await page.evaluate(() => {
             return Array.from(document.querySelectorAll('.elementor-testimonial__text'))
                 .map(el => el.textContent.trim());
         });
 
-        console.log('Scraped Testimonials:', testimonials); // Log for debugging
+        console.log('Scraped Dates:', dates); // Log for debugging
         await browser.close();
 
-        if (!testimonials || testimonials.length === 0) {
-            throw new Error('No testimonials were scraped. Check your selector.');
+        if (!dates || dates.length === 0) {
+            throw new Error('No dates were scraped. Check your selector.');
         }
 
-        return testimonials;
+        return dates;
     } catch (error) {
-        console.error('Error in scrapeKableAcademyTestimonials:', error);
+        console.error('Error in scrapeKableAcademyDates:', error);
         return [];
     }
 }
