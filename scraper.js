@@ -10,10 +10,10 @@ export async function scrapeKableAcademyDates() {
         });
 
         const page = await browser.newPage();
-        await page.goto(url, { waitUntil: 'load' });
+        await page.goto(url, { waitUntil: 'load', timeout: 30000 }); // 30-second timeout
 
-        // Wait for Elementor content to load
-        await page.waitForSelector('.elementor-testimonial__text');
+        // Wait for the target elements with a timeout
+        await page.waitForSelector('.elementor-testimonial__text', { timeout: 10000 }); // 10-second timeout
 
         // Scrape the dates
         const dates = await page.evaluate(() => {
@@ -25,12 +25,13 @@ export async function scrapeKableAcademyDates() {
         await browser.close();
 
         if (!dates || dates.length === 0) {
-            throw new Error('No dates were scraped. Check your selector.');
+            console.error('No dates were scraped.');
+            throw new Error('No dates found.');
         }
 
         return dates;
     } catch (error) {
         console.error('Error in scrapeKableAcademyDates:', error);
-        return [];
+        return []; // Return an empty array if something goes wrong
     }
 }

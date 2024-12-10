@@ -13,10 +13,16 @@ app.get('/', (req, res) => {
 app.get('/api/dates', async (req, res) => {
     try {
         const dates = await scrapeKableAcademyDates();
+
+        if (!dates || dates.length === 0) {
+            console.warn('No dates found, returning fallback response.');
+            return res.status(404).json({ error: 'No dates found.' });
+        }
+
         res.json(dates);
     } catch (error) {
         console.error('Error fetching dates:', error);
-        res.status(500).send('Internal Server Error');
+        res.status(500).json({ error: 'Internal Server Error' });
     }
 });
 
