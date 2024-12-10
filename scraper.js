@@ -1,25 +1,26 @@
 const axios = require('axios');
 const cheerio = require('cheerio');
 
-async function scrapeKableAcademyEvents() {
-    const url = 'https://kableacademy.com/events'; // Replace with your events page URL
+async function scrapeKableAcademyDates() {
+    const url = 'https://kableacademy.com/';
+
     try {
         const { data } = await axios.get(url);
         const $ = cheerio.load(data);
-        const events = [];
+        const dates = [];
 
-        $('.event-card').each((i, element) => { // Adjust CSS selectors as needed
-            const title = $(element).find('.event-title').text().trim();
-            const date = $(element).find('.event-date').text().trim();
-            const location = $(element).find('.event-location').text().trim();
-            events.push({ title, date, location });
+        // Update the selector to match the actual HTML structure on the website
+        $('.date-class').each((i, element) => { // Replace '.date-class' with the actual class or tag
+            const date = $(element).text().trim();
+            dates.push(date);
         });
 
-        return events;
+        return dates;
     } catch (error) {
         console.error('Error scraping the website:', error);
         return [];
     }
 }
 
-module.exports = scrapeKableAcademyEvents;
+// Test the scraper
+scrapeKableAcademyDates().then(dates => console.log(dates));
