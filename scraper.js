@@ -1,6 +1,6 @@
 import { chromium } from 'playwright';
 
-export async function scrapeKableAcademyDates() {
+export async function scrapeKableAcademyTestimonials() {
     const url = 'https://kableacademy.com/';
 
     try {
@@ -12,16 +12,25 @@ export async function scrapeKableAcademyDates() {
         const page = await browser.newPage();
         await page.goto(url, { waitUntil: 'load' });
 
-        // Adjust the selector below to match the website's HTML structure
-        const dates = await page.evaluate(() => {
-            return Array.from(document.querySelectorAll('.date-class')) // Replace '.date-class' with the actual selector
+        // Wait for Elementor content to load
+        await page.waitForSelector('.elementor-testimonial__text'); // Wait for the specific class
+
+        // Scrape the testimonials
+        const testimonials = await page.evaluate(() => {
+            return Array.from(document.querySelectorAll('.elementor-testimonial__text'))
                 .map(el => el.textContent.trim());
         });
 
+        console.log('Scraped Testimonials:', testimonials); // Log for debugging
         await browser.close();
-        return dates;
+
+        if (!testimonials || testimonials.length === 0) {
+            throw new Error('No testimonials were scraped. Check your selector.');
+        }
+
+        return testimonials;
     } catch (error) {
-        console.error('Error scraping the website:', error);
+        console.error('Error in scrapeKableAcademyTestimonials:', error);
         return [];
     }
 }
