@@ -1,5 +1,5 @@
-const express = require('express');
-const scrapeKableAcademyDates = require('./scraper');
+import express from 'express';
+import { scrapeKableAcademyDates } from './scraper.js';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
