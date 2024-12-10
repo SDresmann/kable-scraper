@@ -4,6 +4,18 @@ import { scrapeKableAcademyDates } from './scraper.js';
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// Middleware to set CSP headers
+app.use((req, res, next) => {
+    res.setHeader("Content-Security-Policy", "default-src 'self'; img-src 'self' data:;");
+    next();
+});
+
+// Root route
+app.get('/', (req, res) => {
+    res.send('Welcome to the Kable Academy Scraper API. Use /api/events to get data.');
+});
+
+// API route
 app.get('/api/events', async (req, res) => {
     try {
         const dates = await scrapeKableAcademyDates();
