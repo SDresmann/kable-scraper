@@ -2,7 +2,7 @@ import express from 'express';
 import { scrapeKableAcademyDates } from './scraper.js';
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 10000;
 
 // Root route
 app.get('/', (req, res) => {
