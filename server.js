@@ -1,16 +1,19 @@
 const express = require('express');
-const scrapeKableAcademyEvents = require('./scraper');
+const scrapeKableAcademyDates = require('./scraper');
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
-// API Endpoint to Fetch Events
 app.get('/api/events', async (req, res) => {
-    const events = await scrapeKableAcademyEvents();
-    res.json(events);
+    try {
+        const dates = await scrapeKableAcademyDates();
+        res.json(dates);
+    } catch (error) {
+        console.error('Error fetching dates:', error);
+        res.status(500).send('Internal Server Error');
+    }
 });
 
-// Start the Server
 app.listen(PORT, () => {
-    console.log(`Server is running at http://localhost:${PORT}`);
+    console.log(`Server is running on http://localhost:${PORT}`);
 });
