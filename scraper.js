@@ -13,20 +13,24 @@ export async function scrapeKableAcademyDates() {
         console.log('Navigating to the site...');
         await page.goto(url, { waitUntil: 'load', timeout: 30000 });
 
+        // Log the full HTML content of the page for debugging
+        const content = await page.content();
+        console.log('Page content:', content);
+
         console.log('Waiting for selector...');
-        await page.waitForSelector('.elementor-testimonial__text', { timeout: 10000 });
+        await page.waitForSelector('.elementor-testimonial__text', { timeout: 15000 });
 
         console.log('Scraping data...');
-        const dates = await page.evaluate(() => {
-            return Array.from(document.querySelectorAll('.elementor-testimonial__text'))
-                .map(el => el.textContent.trim());
-        });
+        const dates = await page.evaluate(() =>
+            Array.from(document.querySelectorAll('.elementor-testimonial__text'))
+                .map(el => el.textContent.trim())
+        );
 
-        console.log('Scraped Dates:', dates); // Log scraped data
+        console.log('Scraped Dates:', dates);
         await browser.close();
 
         if (!dates || dates.length === 0) {
-            console.error('No dates were scraped. Possible selector issue.');
+            console.error('No dates were scraped. Possible selector or rendering issue.');
             throw new Error('No dates found.');
         }
 
