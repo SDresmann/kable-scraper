@@ -1,5 +1,5 @@
 import express from "express";
-import { scrapeKableAcademyData } from "./kable.js"; // Import the scraper function
+import { main } from "./kable.js"; // Import the main function from kable.js
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -9,13 +9,13 @@ app.get("/", (req, res) => {
     res.send("Welcome to the Kable Academy Scraper API!");
 });
 
-// API route to scrape data
+// API route to run the scraper
 app.get("/api/data", async (req, res) => {
     try {
-        const data = await scrapeKableAcademyData(); // Call the scraper function
-        res.json(data); // Return the scraped data as JSON
+        const data = await main(); // Call the main function
+        res.json(data); // Send the scraped data as JSON
     } catch (error) {
-        console.error("Error scraping data:", error);
+        console.error("Error while scraping data:", error);
         res.status(500).json({ error: "Failed to scrape data." });
     }
 });

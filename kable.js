@@ -2,7 +2,7 @@ import puppeteer from "puppeteer";
 
 const url = 'https://www.kableacademy.com/'
 
-const main = async () =>{
+export const main = async () =>{
     const browser = await puppeteer.launch();
     const page = await browser.newPage();
     await page.goto(url)
