@@ -1,5 +1,6 @@
 import express from 'express';
 import { scrapeKableAcademyDates } from './scraper.js';
+import axios from 'axios';
 
 const app = express();
 const PORT = process.env.PORT || 10000;
@@ -10,7 +11,6 @@ app.get('/', (req, res) => {
 });
 
 // API route for dates
-import axios from 'axios';
 
 
 
