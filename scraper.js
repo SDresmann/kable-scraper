@@ -1,41 +1,34 @@
-import { chromium } from 'playwright';
+import puppeteer from "puppeteer";
 
-export async function scrapeKableAcademyDates() {
-    const url = 'https://kableacademy.com/';
+const scrapeKableAcademyData = async () => {
+    const url = 'https://www.kableacademy.com/';
 
     try {
-        const browser = await chromium.launch({
-            headless: false, // Run in non-headless mode for debugging
+        const browser = await puppeteer.launch({
+            headless: true, // Set to false for debugging
             args: ['--no-sandbox', '--disable-setuid-sandbox']
         });
 
         const page = await browser.newPage();
-        console.log('Navigating to the site...');
-        await page.goto(url, { waitUntil: 'networkidle2', timeout: 30000 });
+        await page.goto(url, { waitUntil: 'networkidle2' });
 
-        // Log the entire HTML content of the page for debugging
-        const content = await page.content();
-        console.log('Page content:', content); // Logs the full page HTML
+        // Extract all articles
+        const allArticles = await page.evaluate(() => {
+            const articles = document.querySelectorAll('.swiper-wrapper');
+            return Array.from(articles).map((article) => {
+                // Get the title and testimonial text
+                const title = article.querySelector('div')?.innerText.trim();
+                const testimonialText = article.querySelector('.elementor-testimonial__text')?.innerText.trim();
+                return { title, testimonialText };
+            });
+        });
 
-        // Wait for the specific element (dates container)
-        await page.waitForSelector('.elementor-testimonial__text', { timeout: 15000 });
-
-        // Extract the text content of matching elements
-        const dates = await page.evaluate(() =>
-            Array.from(document.querySelectorAll('.elementor-testimonial__text'))
-                .map(el => el.textContent.trim())
-        );
-
-        console.log('Scraped Dates:', dates);
         await browser.close();
-
-        if (!dates || dates.length === 0) {
-            throw new Error('No dates found. Check if the selector is correct or if the content is dynamic.');
-        }
-
-        return dates;
+        return allArticles; // Return scraped data
     } catch (error) {
-        console.error('Error in scrapeKableAcademyDates:', error);
-        return [];
+        console.error('Error in scrapeKableAcademyData:', error);
+        return []; // Return an empty array on error
     }
-}
+};
+
+export default scrapeKableAcademyData;
